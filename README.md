@@ -2,6 +2,6 @@
 
 ---
 
-_Note: This is de developpement project to showcase django. Do not use the same configuration when you delpoy your app_
+_Note: This is a developpement project to showcase django. Do not use the same configuration when you delpoy your app_
 
 ---
