@@ -12,3 +12,12 @@ def getAuthUser(request):
         return None
 
     return user[0]
+
+
+def setAuthUser(request, user):
+    request.session["userId"] = user.id
+
+
+def delAuthUser(request):
+    if request.session.get("userId"):
+        del request.session["userId"]

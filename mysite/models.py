@@ -6,7 +6,7 @@ class User(models.Model):
     firstname = models.CharField(max_length=30)
     lastname = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
-    email = models.EmailField(max_length=50)
+    email = models.EmailField(max_length=50, unique=True)
     phone = models.CharField(max_length=50)
     password = models.CharField(max_length=128)
     GENDER_CHOICES = (("M", "Male"), ("F", "Female"), ("X", "X"))

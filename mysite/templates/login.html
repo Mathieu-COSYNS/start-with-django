@@ -8,8 +8,7 @@ Login
 
 <form action="/login" method="post">
     {% csrf_token %}
-    <input type="email" name="email" />
-    <input type="password" name="password" />
+    {{ form.as_p }}
     <input type="submit" value="Envoyer" />
 </form>
 
