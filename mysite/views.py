@@ -1,7 +1,7 @@
-from mysite.models import User
+from .models import User
 from django.shortcuts import redirect, render
 from datetime import datetime
-from mysite.auth import isAuth, getAuthUser
+from .auth import isAuth, getAuthUser
 
 
 def login(request):
