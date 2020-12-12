@@ -2,6 +2,7 @@ from .models import User
 from django.shortcuts import redirect, render
 from datetime import datetime
 from .auth import isAuth, getAuthUser
+from .forms import RegisterUserForm
 
 
 def login(request):
@@ -28,26 +29,17 @@ def register(request):
     if isAuth(request):
         return redirect("/account")
 
-    if request.method == "POST":
-        if request.POST.get("email"):
-            newUser = User(
-                firstname=request.POST.get("firstname"),
-                lastname=request.POST.get("lastname"),
-                country=request.POST.get("country"),
-                email=request.POST.get("email"),
-                phone=request.POST.get("phone"),
-                password=request.POST.get("password"),
-                gender=request.POST.get("gender"),
-            )
+    form = RegisterUserForm(request.POST or None)
 
-            newUser.save()
+    if form.is_valid():
+        form.save()
 
-            request.session["userId"] = newUser.id
-            return redirect("/account")
+        # request.session["userId"] = newUser.id
+        return redirect("/account")
 
-        return redirect("/register")
+    context = {"form": form}
 
-    response = render(request, "register.html")
+    response = render(request, "register.html", context)
     return response
 
 
