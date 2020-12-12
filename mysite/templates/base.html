@@ -1,25 +1,71 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en" class="h-100">
 
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>{% block title %}No title yet{% endblock title %} - MySite</title>
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" />
 </head>
 
-<body>
+<body class="d-flex flex-column h-100">
     <header>
-        <nav>
-            <ul>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
-                <li><a href="/account">Account</a></li>
-            </ul>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/">ULB Confessions</a>
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        {% if myUser is None %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Sign in</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/register">Register</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account">Account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Sign out</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
-    {% block content %}
-    No Content yet
-    {% endblock content %}
+    <main class="mb-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9 mt-2">
+                    <div class="card">
+                        {% block content %}
+                        No Content yet
+                        {% endblock content %}
+                    </div>
+                </div>
+                <div class="col-md-3 mt-2">
+                    <div class="card">
+                        {% block sidebar %}
+                        No Content yet
+                        {% endblock sidebar %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="mt-auto bg-light py-3">
+        <div class="container">
+            <p class="text-muted m-0">Showcase for
+                <a href="https://www.djangoproject.com/">Django v2.2</a>.
+                See source code on <a href="https://github.com/Mathieu-COSYNS/start-with-django">Github</a>.
+                Use <a href="https://getbootstrap.com/">Bootstrap v4.5</a> for theming
+            </p>
+        </div>
+    </footer>
 </body>
 
 </html>
