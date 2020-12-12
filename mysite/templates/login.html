@@ -1,17 +1,16 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>MySite</title>
-    <link rel="stylesheet" href="{% static 'test.css' %}" />
-  </head>
-  <body>
-    <form action="/login" method="post">
-      {% csrf_token %}
-      <input type="email" name="email" />
-      <input type="password" name="password" />
-      <input type="submit" value="Envoyer" />
-    </form>
-  </body>
-</html>
+{% block title %}
+Login
+{% endblock title %}
+
+{% block content %}
+
+<form action="/login" method="post">
+    {% csrf_token %}
+    <input type="email" name="email" />
+    <input type="password" name="password" />
+    <input type="submit" value="Envoyer" />
+</form>
+
+{% endblock content %}
