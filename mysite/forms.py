@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Confession, User
+from .models import Comment, Confession, User
 import re
 
 
@@ -66,3 +66,9 @@ class AddConfessionForm(forms.ModelForm):
         hashtags = hashtags.split(" ")
 
         return hashtags
+
+
+class AddCommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ("content",)

@@ -1,11 +1,33 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}
-Confession details
+{{ confession.title }}
 {% endblock title %}
 
 {% block content %}
 
-<h1>Confession details</h1>
+<a href="{% url 'home' %}">Back</a>
+<h1>{{ confession.title }}</h1>
+<p>Likes: {{ confession.likes }} | Dislikes: {{ confession.dislikes }}</p>
+<p class="m-0 ml-1">
+    {% for hashtag in confession.hashtags %}
+    <span class="badge badge-secondary">{{ hashtag }}</span>
+    {% endfor %}
+</p>
+<p>{{ confession.content }}</p>
+
+<h3>Comments</h3>
+<div class="ml-4">
+    {% for comment in comments %}
+    <p class="mb-0">Likes: {{ comment.likes }} | Dislikes: {{ comment.dislikes }}</p>
+    <p>{{ comment.content }}</p>
+    {% endfor %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+</form>
 
 {% endblock content %}

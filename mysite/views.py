@@ -1,10 +1,10 @@
 from mysite.utils import toInt
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Count
 from .models import Confession, Hashtag
 from .auth import isAuth, setAuthUser, delAuthUser
-from .forms import AddConfessionForm, LoginUserForm, RegisterUserForm
+from .forms import AddCommentForm, AddConfessionForm, LoginUserForm, RegisterUserForm
 
 
 def sign_in(request):
@@ -109,5 +109,40 @@ def add_confession(request):
 
 
 def confession_details(request, id):
-    response = render(request, "confession_details.html")
+
+    confession = get_object_or_404(Confession, id=id)
+
+    confessionDict = {
+        "id": confession.id,
+        "title": confession.title,
+        "content": confession.content,
+        "hashtags": confession.hashtags.all().values_list("name", flat=True),
+        "likes": confession.confessionlike_set.filter(positive=True).count(),
+        "dislikes": confession.confessionlike_set.filter(positive=False).count(),
+    }
+    comments = []
+
+    for comment in confession.comment_set.all():
+        commentDict = {
+            "content": comment.content,
+            "likes": comment.commentlike_set.filter(positive=True).count(),
+            "dislikes": comment.commentlike_set.filter(positive=False).count(),
+        }
+        comments.append(commentDict)
+
+    form = None
+
+    if isAuth(request):
+        form = AddCommentForm(request.POST or None)
+
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            print(cleaned_data)
+            """ confession = Confession(title=cleaned_data["title"], content=cleaned_data["content"])
+            confession.save() """
+
+            return redirect(reverse("confession-details", id=id))
+
+    context = {"confession": confessionDict, "comments": comments, "form": form}
+    response = render(request, "confession_details.html", context)
     return response
