@@ -34,7 +34,10 @@ class Comment(models.Model):
 
 
 class Hashtag(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
+
+    class Meta:
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -45,6 +48,9 @@ class ConfessionLike(models.Model):
     confession = models.ForeignKey("Confession", on_delete=models.CASCADE)
     positive = models.BooleanField()
 
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "confession"], name="user_confession_constraint")]
+
     def __str__(self):
         return self.user + " " + self.confession + " " + self.positive
 
@@ -54,12 +60,15 @@ class CommentLike(models.Model):
     comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
     positive = models.BooleanField()
 
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "comment"], name="user_comment_constraint")]
+
     def __str__(self):
         return self.user + " " + self.comment + " " + self.positive
 
 
 class ConfessionReport(models.Model):
-    confession = models.ForeignKey("Confession", on_delete=models.CASCADE)
+    confession = models.OneToOneField("Confession", on_delete=models.CASCADE)
     count = models.PositiveIntegerField()
 
     def __str__(self):
@@ -67,7 +76,7 @@ class ConfessionReport(models.Model):
 
 
 class CommentReport(models.Model):
-    comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
+    comment = models.OneToOneField("Comment", on_delete=models.CASCADE)
     count = models.PositiveIntegerField()
 
     def __str__(self):

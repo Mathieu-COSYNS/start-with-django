@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import home, sign_in, account, sign_up, sign_out
+from .views import add_confession, confession_details, home, sign_in, sign_up, sign_out
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home, name="home"),
     path("sign-in", sign_in, name="sign-in"),
     path("sign-up", sign_up, name="sign-up"),
-    path("account", account, name="account"),
     path("sign-out", sign_out, name="sign-out"),
+    path("confession/add", add_confession, name="add-confession"),
+    path("confession/<int:id>", confession_details, name="confession-details"),
 ]

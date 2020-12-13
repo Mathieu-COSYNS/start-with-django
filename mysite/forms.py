@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import User
+from .models import Confession, User
+import re
 
 
 class LoginUserForm(forms.Form):
@@ -42,3 +43,26 @@ class RegisterUserForm(forms.ModelForm):
             msg = "Password and Confirm password must be identical"
             self.add_error("password", msg)
             self.add_error("confirm_password", msg)
+
+
+class AddConfessionForm(forms.ModelForm):
+    hashtags = forms.CharField(max_length=500)
+
+    class Meta:
+        model = Confession
+        fields = (
+            "title",
+            "content",
+        )
+
+    def clean_hashtags(self):
+        hashtags = self.cleaned_data["hashtags"]
+
+        if hashtags and not re.fullmatch("^(#[a-zA-Z0-9]+ ?)+$", hashtags):
+            raise ValidationError(
+                '# are not well formatted. It\'s should be a list like "#TropBien #Example #2020". Only alpha numeric chars are valid'
+            )
+
+        hashtags = hashtags.split(" ")
+
+        return hashtags

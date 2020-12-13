@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-column flex-xl-row">
+    <h1>Confessions</h1>
+    <form class="form-inline">
+        <select class="custom-select" name="hashtag">
+            <option value="" selected>Select an #</option>
+            {% for hashtag in hashtags %}
+            <option value="{{ hashtag.id }}">{{ hashtag.name }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-outline-success mt-1 mt-sm-0 ml-sm-1" type="submit">Search</button>
+    </form>
+</div>
+<div>
+    {% if selected_hashtag %}
+    <p>Results for : {{ selected_hashtag.name }}</p>
+    {% endif %}
+    {% for confession in confessions %}
+    <article>
+        <h2 class="m-0"><a href="{% url 'confession-details' confession.id %}">{{ confession.title }}</a></h2>
+        <p class="m-0 ml-1">
+            {% for hashtag in confession.hashtags.all %}
+            <span class="badge badge-secondary">{{ hashtag.name }}</span>
+            {% endfor %}
+        </p>
+        <p>{{ confession.content|truncatechars:300 }}</p>
+    </article>
+    {% endfor %}
+</div>
+
+{% endblock content %}
+
+{% block sidebar %}
+
+<a class="btn btn-primary" href="{% url 'add-confession' %}">Add a confession</a>
+
+{% endblock sidebar %}
