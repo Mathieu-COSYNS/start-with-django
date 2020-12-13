@@ -25,9 +25,10 @@ Home
     {% for confession in confessions %}
     <article>
         <h2 class="m-0"><a href="{% url 'confession-details' confession.id %}">{{ confession.title }}</a></h2>
+        <p>Likes: {{ confession.likes }} | Dislikes: {{ confession.dislikes }}</p>
         <p class="m-0 ml-1">
-            {% for hashtag in confession.hashtags.all %}
-            <span class="badge badge-secondary">{{ hashtag.name }}</span>
+            {% for hashtag in confession.hashtags %}
+            <span class="badge badge-secondary">{{ hashtag }}</span>
             {% endfor %}
         </p>
         <p>{{ confession.content|truncatechars:300 }}</p>
@@ -40,5 +41,12 @@ Home
 {% block sidebar %}
 
 <a class="btn btn-primary" href="{% url 'add-confession' %}">Add a confession</a>
+
+<h5 class="mt-4 text-center">Top 10</h5>
+<ol>
+    {% for confession in confession_top10_id_title_map %}
+    <li><a href="{% url 'confession-details' confession.id %}">{{ confession.title }}</a></li>
+    {% endfor %}
+</ol>
 
 {% endblock sidebar %}

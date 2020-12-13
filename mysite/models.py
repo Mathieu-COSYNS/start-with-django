@@ -52,7 +52,7 @@ class ConfessionLike(models.Model):
         constraints = [models.UniqueConstraint(fields=["user", "confession"], name="user_confession_constraint")]
 
     def __str__(self):
-        return self.user + " " + self.confession + " " + self.positive
+        return str(self.user) + " " + str(self.confession) + " " + str(self.positive)
 
 
 class CommentLike(models.Model):
@@ -64,7 +64,7 @@ class CommentLike(models.Model):
         constraints = [models.UniqueConstraint(fields=["user", "comment"], name="user_comment_constraint")]
 
     def __str__(self):
-        return self.user + " " + self.comment + " " + self.positive
+        return str(self.user) + " " + str(self.comment) + " " + str(self.positive)
 
 
 class ConfessionReport(models.Model):
@@ -72,7 +72,7 @@ class ConfessionReport(models.Model):
     count = models.PositiveIntegerField()
 
     def __str__(self):
-        return self.confession + " " + self.count
+        return str(self.confession) + " " + str(self.count)
 
 
 class CommentReport(models.Model):
@@ -80,4 +80,4 @@ class CommentReport(models.Model):
     count = models.PositiveIntegerField()
 
     def __str__(self):
-        return self.comment + " " + self.count
+        return str(self.comment) + " " + str(self.count)

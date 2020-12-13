@@ -1,8 +1,9 @@
 from mysite.utils import toInt
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
-from .models import Confession, ConfessionLike, Hashtag, User
-from .auth import isAuth, getAuthUser, setAuthUser, delAuthUser
+from django.db.models import Count
+from .models import Confession, Hashtag
+from .auth import isAuth, setAuthUser, delAuthUser
 from .forms import AddConfessionForm, LoginUserForm, RegisterUserForm
 
 
@@ -48,6 +49,7 @@ def sign_out(request):
 
 def home(request):
     selected_hashtag = toInt(request.GET.get("hashtag"))
+    confessionsList = []
 
     if selected_hashtag:
         try:
@@ -58,10 +60,28 @@ def home(request):
     else:
         confessions = Confession.objects.all()
 
+    for confession in confessions:
+        confessionDict = {
+            "id": confession.id,
+            "title": confession.title,
+            "content": confession.content,
+            "hashtags": confession.hashtags.all().values_list("name", flat=True),
+            "likes": confession.confessionlike_set.filter(positive=True).count(),
+            "dislikes": confession.confessionlike_set.filter(positive=False).count(),
+        }
+        confessionsList.append(confessionDict)
+
+    confession_top10_id_title_map = (
+        Confession.objects.annotate(like_count=Count("confessionlike"))
+        .order_by("-like_count")
+        .values("id", "title")[:10]
+    )
+
     context = {
         "hashtags": Hashtag.objects.all(),
         "selected_hashtag": selected_hashtag,
-        "confessions": confessions,
+        "confessions": confessionsList,
+        "confession_top10_id_title_map": confession_top10_id_title_map,
     }
     response = render(request, "home.html", context)
     return response
