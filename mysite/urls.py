@@ -15,7 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import add_confession, confession_details, home, sign_in, sign_up, sign_out
+from .views import (
+    add_confession,
+    confession_details,
+    confession_details_action,
+    confession_details_comment_action,
+    home,
+    sign_in,
+    sign_up,
+    sign_out,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,4 +34,10 @@ urlpatterns = [
     path("sign-out", sign_out, name="sign-out"),
     path("confession/add", add_confession, name="add-confession"),
     path("confession/<int:id>", confession_details, name="confession-details"),
+    path("confession/<int:id>/<slug:slug>", confession_details_action, name="confession-details-action"),
+    path(
+        "confession/<int:confession_id>/comment/<int:comment_id>/<slug:slug>",
+        confession_details_comment_action,
+        name="confession-details-comment-action",
+    ),
 ]

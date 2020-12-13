@@ -69,6 +69,10 @@ class AddConfessionForm(forms.ModelForm):
 
 
 class AddCommentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AddCommentForm, self).__init__(*args, **kwargs)
+        self.fields["content"].label = "Comment"
+
     class Meta:
         model = Comment
         fields = ("content",)

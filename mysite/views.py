@@ -2,8 +2,8 @@ from mysite.utils import toInt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Count
-from .models import Confession, Hashtag
-from .auth import isAuth, setAuthUser, delAuthUser
+from .models import Comment, CommentLike, Confession, ConfessionLike, Hashtag
+from .auth import getAuthUser, isAuth, setAuthUser, delAuthUser
 from .forms import AddCommentForm, AddConfessionForm, LoginUserForm, RegisterUserForm
 
 
@@ -82,6 +82,7 @@ def home(request):
         "selected_hashtag": selected_hashtag,
         "confessions": confessionsList,
         "confession_top10_id_title_map": confession_top10_id_title_map,
+        "myUser": getAuthUser(request),
     }
     response = render(request, "home.html", context)
     return response
@@ -102,7 +103,7 @@ def add_confession(request):
 
         return redirect(reverse("home"))
 
-    context = {"form": form}
+    context = {"form": form, "myUser": getAuthUser(request)}
 
     response = render(request, "add_confession.html", context)
     return response
@@ -124,7 +125,9 @@ def confession_details(request, id):
 
     for comment in confession.comment_set.all():
         commentDict = {
+            "id": comment.id,
             "content": comment.content,
+            "author": comment.author.firstname + " " + comment.author.lastname,
             "likes": comment.commentlike_set.filter(positive=True).count(),
             "dislikes": comment.commentlike_set.filter(positive=False).count(),
         }
@@ -138,11 +141,68 @@ def confession_details(request, id):
         if form.is_valid():
             cleaned_data = form.cleaned_data
             print(cleaned_data)
-            """ confession = Confession(title=cleaned_data["title"], content=cleaned_data["content"])
-            confession.save() """
+            comment = Comment(content=cleaned_data["content"], author=getAuthUser(request), confession=confession)
+            comment.save()
 
-            return redirect(reverse("confession-details", id=id))
+            return redirect(reverse("confession-details", args=[id]))
 
-    context = {"confession": confessionDict, "comments": comments, "form": form}
+    context = {"confession": confessionDict, "comments": comments, "form": form, "myUser": getAuthUser(request)}
     response = render(request, "confession_details.html", context)
     return response
+
+
+def confession_details_action(request, id, slug):
+
+    if not isAuth(request):
+        return redirect(reverse("confession-details", args=[id]))
+
+    confession = get_object_or_404(Confession, id=id)
+
+    if slug == "like":
+        like = ConfessionLike.objects.filter(confession=confession, user=getAuthUser(request))
+
+        if len(like) == 1:
+            like[0].positive = True
+            like[0].save()
+        elif len(like) == 0:
+            ConfessionLike(confession=confession, user=getAuthUser(request), positive=True).save()
+
+    if slug == "dislike":
+        like = ConfessionLike.objects.filter(confession=confession, user=getAuthUser(request))
+
+        if len(like) == 1:
+            like[0].positive = False
+            like[0].save()
+        elif len(like) == 0:
+            ConfessionLike(confession=confession, user=getAuthUser(request), positive=False).save()
+
+    return redirect(reverse("confession-details", args=[id]))
+
+
+def confession_details_comment_action(request, confession_id, comment_id, slug):
+
+    if not isAuth(request):
+        return redirect(reverse("confession-details", args=[confession_id]))
+
+    confession = get_object_or_404(Confession, id=confession_id)
+    comment = get_object_or_404(confession.comment_set, id=comment_id)
+
+    if slug == "like":
+        like = CommentLike.objects.filter(comment=comment, user=getAuthUser(request))
+
+        if len(like) == 1:
+            like[0].positive = True
+            like[0].save()
+        elif len(like) == 0:
+            CommentLike(comment=comment, user=getAuthUser(request), positive=True).save()
+
+    if slug == "dislike":
+        like = CommentLike.objects.filter(comment=comment, user=getAuthUser(request))
+
+        if len(like) == 1:
+            like[0].positive = False
+            like[0].save()
+        elif len(like) == 0:
+            CommentLike(comment=comment, user=getAuthUser(request), positive=False).save()
+
+    return redirect(reverse("confession-details", args=[confession_id]))

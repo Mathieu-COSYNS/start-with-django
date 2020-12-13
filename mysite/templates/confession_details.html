@@ -20,14 +20,35 @@
 <h3>Comments</h3>
 <div class="ml-4">
     {% for comment in comments %}
-    <p class="mb-0">Likes: {{ comment.likes }} | Dislikes: {{ comment.dislikes }}</p>
-    <p>{{ comment.content }}</p>
+    <p class="mb-0">Likes: {{ comment.likes }} | Dislikes: {{ comment.dislikes }}<a class="btn btn-primary"
+            href="{% url 'confession-details-comment-action' confession_id=confession.id comment_id=comment.id slug='like' %}">Like
+            this comment</a><a class="btn btn-primary"
+            href="{% url 'confession-details-comment-action' confession_id=confession.id comment_id=comment.id slug='dislike' %}">Dislike
+            this comment</a></p>
+    <p>{{ comment.content }} <em class="text-muted">{{ comment.author }}</em></p>
     {% endfor %}
 </div>
 
+{% if myUser is None %}
+<p class="text-muted">You must be connected to post a comment</p>
+{% else %}
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
+    <input class="btn btn-primary" type="submit" value="Comment" />
 </form>
+{% endif %}
 
 {% endblock content %}
+
+{% block sidebar %}
+
+{% if myUser is not None %}
+<a class="btn btn-primary" href="{% url 'confession-details-action' id=confession.id slug='like' %}">Like this
+    confession</a>
+<a class="btn btn-primary mt-2" href="{% url 'confession-details-action' id=confession.id slug='dislike' %}">Dislike
+    this
+    confession</a>
+{% endif %}
+
+{% endblock sidebar %}
