@@ -28,12 +28,9 @@ class RegisterUserForm(forms.ModelForm):
         fields = (
             "firstname",
             "lastname",
-            "country",
             "email",
-            "phone",
             "password",
             "confirm_password",
-            "gender",
         )
 
     def clean(self):

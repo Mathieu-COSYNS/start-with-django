@@ -1,57 +1,61 @@
-from .models import User
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from .models import User
 from .auth import isAuth, getAuthUser, setAuthUser, delAuthUser
 from .forms import LoginUserForm, RegisterUserForm
 
 
-def login(request):
+def sign_in(request):
 
     if isAuth(request):
-        return redirect("/account")
+        return redirect(reverse("account"))
 
     form = LoginUserForm(request.POST or None)
 
     if form.is_valid():
         user = form.cleaned_data
         setAuthUser(request, user)
-        return redirect("/account")
+        return redirect(reverse("account"))
 
     context = {"form": form}
-    response = render(request, "login.html", context)
+    response = render(request, "sign-in.html", context)
     return response
 
 
-def register(request):
+def sign_up(request):
 
     if isAuth(request):
-        return redirect("/account")
+        return redirect(reverse("account"))
 
     form = RegisterUserForm(request.POST or None)
 
     if form.is_valid():
         new_user = form.save()
-
         setAuthUser(request, new_user)
-        return redirect("/account")
+        return redirect(reverse("account"))
 
     context = {"form": form}
-    response = render(request, "register.html", context)
+    response = render(request, "sign-up.html", context)
     return response
+
+
+def sign_out(request):
+
+    delAuthUser(request)
+    return redirect(reverse("sign-in"))
+
+
+def home(request):
+    return redirect(reverse("sign-in"))
 
 
 def account(request):
 
     if not isAuth(request):
-        return redirect("/login")
+        return redirect(reverse("sign-in"))
 
     print(User.objects.all())
 
     context = {"myUser": getAuthUser(request)}
     response = render(request, "account.html", context)
     return response
-
-
-def logout(request):
-
-    delAuthUser(request)
-    return redirect("/login")
