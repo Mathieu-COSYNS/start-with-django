@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Algo</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <legend>Stats</legend>
+        <tr>
+            <th>Date</th>
+            <th>Positive covid test that day</th>
+            <th>Positive covid test within 30 days</th>
+            <th>Number of contact that day</th>
+            <th>Number of contact within 30 days</th>
+        </tr>
+
+        {% for date, covid_that_day, covid_30_days, covid_contacts_that_day, covid_contacts_30_days in stats %}
+
+        <tr>
+            <td>{{date|date:"d F Y"}}</td>
+            <td>{{covid_that_day}}</td>
+            <td>{{covid_30_days}}</td>
+            <td>{{covid_contacts_that_day}}</td>
+            <td>{{covid_contacts_30_days}}</td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</body>
+
+</html>
